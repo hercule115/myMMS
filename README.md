@@ -36,7 +36,8 @@ Results are provided as a JSON entity.
 
     python3 myMetServiceTides.py -s       # Start server mode
 
-  On client machine:
+    *On client machine:*
+    
     curl http://localhost:5002/mymetservicetides/api/v1.0/tides
     [
       "10",
