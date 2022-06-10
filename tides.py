@@ -216,28 +216,8 @@ class MetServiceTides:
             data.append([ele for ele in cols if ele]) # Get rid of empty values
 
         #print(data)
-        # Save lists to text file
-        dumpListOfListToFile(mg.LOCAL_TAB_FILE, data)
 
-        if not os.path.isfile(mg.LOCAL_TAB_FILE):
-            myprint(1, 'Local chart file does not exist...')
-            return None
-            
-        myprint(1, 'Local chart file exists. Parsing...')
-        # empty list to read list from a file
-        allLines = list()
-
-        # open file and read the content in a list
-        with open(mg.LOCAL_TAB_FILE, 'r') as fp:
-            for line in fp:
-                # remove linebreak from the current line
-                # linebreak is the last character of each line
-                x = line[1:-2]
-
-                # add current item to the list
-                allLines.append(x)
-
-        monthYear = allLines[0].replace("'", "")
+        monthYear = data[0][0].replace("'", "")
         mmyy = datetime.strptime(monthYear, '%B %Y').strftime('%m%y')
 
         myprint(1, monthYear, mmyy)
@@ -245,18 +225,17 @@ class MetServiceTides:
         oneDayDict = dict()
         oneMonthDict = dict()
         
-        # Parse first month (current) only
-        for oneLine in allLines[0:35]:	# enough for one month...
-            oneLineList = [i.replace("'", "") for i in list(oneLine.split(","))]
-            myprint(2, oneLineList)
-
-            if oneLineList[0].isnumeric():	# skip header lines
-                oneDayDict.clear()
-                k = format(int(oneLineList[0]), '02d') + mmyy  # date (ddmmyy) as key
-                oneMonthDict[k] = [unicodedata.normalize("NFKD", fld).lstrip() for fld in oneLineList]                
-            if oneLineList[0] == '':
+        # Parse first month (current month) only
+        for oneDayList in data:
+            # If item is empty, it means the end of month
+            if len(oneDayList) == 0:	
                 myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
                 break
+
+            if oneDayList[0].isnumeric():	# skip header lines
+                oneDayDict.clear()
+                k = format(int(oneDayList[0]), '02d') + mmyy  # date (ddmmyy) as key
+                oneMonthDict[k] = [unicodedata.normalize("NFKD", fld).lstrip() for fld in oneDayList]                
         myprint(1, oneMonthDict)
 
         # Update local cache file
