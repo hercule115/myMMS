@@ -253,8 +253,7 @@ class MetServiceTides:
             if oneLineList[0].isnumeric():	# skip header lines
                 oneDayDict.clear()
                 k = format(int(oneLineList[0]), '02d') + mmyy  # date (ddmmyy) as key
-                oneMonthDict[k] = oneLineList
-                
+                oneMonthDict[k] = [unicodedata.normalize("NFKD", fld).lstrip() for fld in oneLineList]                
             if oneLineList[0] == '':
                 myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
                 break
@@ -338,10 +337,8 @@ def showTidesInfo(tidesDate):
         # build a list of tuples, each tuple containing: (time of tide, height of tide, label)
         l = list()
         for i in range(1, 9, 2):	# Skip over date field and height
-            l.append((unicodedata.normalize("NFKD", data[tidesDate][i]).lstrip(),
-                      data[tidesDate][i+1].lstrip(),
-                      labels[i]))
-
+            l.append((data[tidesDate][i], data[tidesDate][i+1], labels[i]))
+            
         # Bubble sort the list by ascending time
         bubbleSort(l)
         
@@ -366,18 +363,6 @@ def showTidesInfo(tidesDate):
             for ele in l:
                 s = "{L:<19}: {B}{T:6}{E}({H})".format(L=ele[2], B=color.BOLD, T=ele[0], E=color.END,H=ele[1])
                 print(s)
-
-        # s = ''
-        # i = 1
-        # for lbl in ['1st High Tide Time', '1st High Tide Height', '2nd High Tide Time', '2nd High Tide Height']:
-        #     s += "{L}:{B}{V:>7}{E}".format(L=lbl, B=color.BOLD, V= data[tidesDate][i], E=color.END)
-        #     i += 1
-        # s += '\n'
-        # for lbl in ['1st Low Tide Time', '1st Low Tide Height', '2nd Low Tide Time', '2nd Low Tide Height']:
-        #     s += "{L}: {B}{V:<7}{E}".format(L=lbl, B=color.BOLD, V= data[tidesDate][i], E=color.END)
-        #     i += 1
-        # print(s)
-
     else:
         print(data[tidesDate])
     return 0
