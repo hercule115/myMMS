@@ -33,7 +33,7 @@ import tides as mst
 
 # Arguments parser
 def parse_argv():
-    desc = 'Get contract information/usage from Sosh server'
+    desc = 'Get tides information from metservice.intnet.mu server'
 
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-s", "--server",

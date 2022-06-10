@@ -17,13 +17,36 @@ Results are provided as a JSON entity containing the following information:
 
 
 2 modes are available:
-- Local/Standalone mode: You run the tool locally from the system it is installed on. If no date is provided on the command line, today's tides are provided.  
+- Local/Standalone mode: You run the tool locally on the system where the tool is installed. If no date is provided on the command line, today's tides are provided.  
 - Remote mode: You retrieve the information over the network using the URL: http://server:5002/mymetservicetides/api/v1.0/tides/[mmddyy].  
   If the date is not provided, today's date is used. 
 
 ## Examples:
 
 ### Stand-alone mode
+
+    python3 myMetServiceTides.py -h       # Get help
+
+    usage: myMetServiceTides.py [-h] [-s] [-d] [-v] [-f [LOGFILE]] [-C]
+                                [-D [DELAY]] [-I]
+                                [DATE]
+
+    Get tides information from metservice.intnet.mu server
+
+    positional arguments:
+      DATE                  Tides Date to show (ddmmyy)
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -s, --server          run in server mode (as a Web Service)
+      -d, --debug           print debug messages (to stdout)
+      -v, --verbose         provides more information
+      -f [LOGFILE], --file [LOGFILE]
+                            write debug messages to FILE
+      -C, --cache           Use local cache if available (default=False)
+      -D [DELAY], --delay [DELAY]
+                            update interval in seconds (Server mode only)
+      -I, --info            print version and exit
 
     python3 myMetServiceTides.py          # Get today's tides
 
