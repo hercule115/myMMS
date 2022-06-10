@@ -12,6 +12,8 @@ Results are provided as a JSON entity.
 
 ## Examples:
 
+### Stand-alone mode
+
     python3 myMetServiceTides.py          # Get today's tides
 
     ['10', ' 10:05', ' 55', ' 22:06', ' 62', ' 04:16', ' 23', ' 15:55', ' 27']
@@ -34,9 +36,11 @@ Results are provided as a JSON entity.
     2nd High Tide Time : 14:32 (57)
     2nd Low Tide Time  : 19:55 (37)
 
+### Server/Client mode
+
     python3 myMetServiceTides.py -s       # Start server mode
 
-    *On client machine:*
+*On client machine:*
     
     curl http://localhost:5002/mymetservicetides/api/v1.0/tides
     [
