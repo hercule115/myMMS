@@ -1,6 +1,6 @@
 # myMMS
 
-Get tides from **Mauritius Météorological Service**
+Get tides from **Mauritius Meteorological Service**
 
 The goal of this tool is to retrieve the tides information provided by http://metservice.intnet.mu.
 Results are provided as a JSON entity containing the following information:
