@@ -1,14 +1,14 @@
 # myMMS
 
-# myMMS
-Get tides from Mauritius Météorological Service
+Get tides from **Mauritius Météorological Service**
 
 The goal of this tool is to retrieve the tides information provided by metservice.intnet.mu.
 Results are provided as a JSON entity.
 
 2 modes are available:
-- Local/Standalone mode: You run the tool locally from the system it is installed on. If no date is provided on the command line, today's tides are provided.
-- Remote mode: You retrieve the information over the network using the URL: http://server:5002/mymetservicetides/api/v1.0/tides/[mmddyy]. If the date is not provided, today's date is used. 
+- Local/Standalone mode: You run the tool locally from the system it is installed on. If no date is provided on the command line, today's tides are provided.  
+- Remote mode: You retrieve the information over the network using the URL: http://server:5002/mymetservicetides/api/v1.0/tides/[mmddyy].  
+  If the date is not provided, today's date is used. 
 
 Examples:
   python3 myMetServiceTides.py          # Get today's tides
