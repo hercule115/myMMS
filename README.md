@@ -2,8 +2,19 @@
 
 Get tides from **Mauritius Météorological Service**
 
-The goal of this tool is to retrieve the tides information provided by metservice.intnet.mu.
-Results are provided as a JSON entity.
+The goal of this tool is to retrieve the tides information provided by http://metservice.intnet.mu.
+Results are provided as a JSON entity containing the following information:
+
+- Date,
+- 1st High Tide Time,
+- 1st High Tide Height,
+- 2nd High Tide Time,
+- 2nd High Tide Height,
+- 1st Low Tide Time,
+- 1st Low Tide Height,
+- 2nd Low Tide Time,
+- 2nd Low Tide Height
+
 
 2 modes are available:
 - Local/Standalone mode: You run the tool locally from the system it is installed on. If no date is provided on the command line, today's tides are provided.  
