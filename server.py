@@ -14,7 +14,6 @@ import time
 
 import config
 from common.utils import myprint, isFileOlderThanXMinutes
-
 import myMetServiceTides as mst
 
 from resources.tides import TidesAPI, TodayTidesAPI
@@ -96,25 +95,6 @@ def apiServerMain():
             myprint(0, 'Failed to create local data cache. Aborting server')
             return(res)
         
-    # Load data from local cache
-    # myprint(0, 'Loading data from cache file: %s' % mg.dataCachePath)
-    # mg.contractsInfo = msc.loadDataFromCache(mg.dataCachePath)
-    # #myprint(0,'1 mg.contractsInfo',type(mg.contractsInfo),len(mg.contractsInfo))
-    # if mg.contractsInfo == None:
-    #     myprint(0, 'No local cache available, Connecting to server')
-    #     res = msc.getContractsInfoFromSoshServer(mg.dataCachePath)
-    #     if res:
-    #         myprint(0, 'Failed to create local data cache')
-    #         return(res)
-
-    #     # Reload local cache
-    #     mg.contractsInfo = msc.loadDataFromCache(mg.dataCachePath)
-
-    # t = os.path.getmtime(mg.dataCachePath)
-    # dt = datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
-    # myprint(0, 'Cache file loaded (len=%d). Last modification time: %s (%d)' % (len(str(mg.contractsInfo)), dt, t))
-    # mg.prevModTime = t
-    
     recording_on = Value('b', True)
     p = Process(target=foreverLoop, args=(recording_on,
                                           mg.dataCachePath,
