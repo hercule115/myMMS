@@ -179,7 +179,7 @@ def main():
         try:
             dt = datetime.datetime.strptime(tidesDate, '%d%m%y')
         except:
-            myprint(0, 'Invalid tides date argument %s' % tidesDate)
+            print('Invalid tides date argument %s' % tidesDate)
             sys.exit(1)
         else:
             tidesDate = dt.strftime('%d%m%y')
