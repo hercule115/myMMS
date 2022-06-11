@@ -203,8 +203,6 @@ class MetServiceTides:
 
         data = []
 
-        #print(soup.table)
-
         # Assuming the first table *IS* the tides table :(
         table = soup.find('table')
         table_body = table.find('tbody')
@@ -215,8 +213,7 @@ class MetServiceTides:
             cols = [ele.text.strip() for ele in cols]
             data.append([ele for ele in cols if ele]) # Get rid of empty values
 
-        #print(data)
-
+        # Get month name from first element of the first list
         monthYear = data[0][0].replace("'", "")
         mmyy = datetime.strptime(monthYear, '%B %Y').strftime('%m%y')
 

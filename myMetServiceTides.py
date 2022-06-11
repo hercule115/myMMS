@@ -60,8 +60,8 @@ def parse_argv():
     parser.add_argument("-C", "--cache",
                         action="store_true",
                         dest="useCache",
-                        default=False,
-                        help="Use local cache if available (default=False)")
+                        default=True,
+                        help="Use local cache if available (default=True)")
     parser.add_argument('-D', '--delay',
                         dest='updateDelay',
                         default=86400,
@@ -217,8 +217,6 @@ def main():
     dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
     myprint(1, 'Cache file updated. Last modification time: %s (%d)' % (dt,t))
 
-    mg.prevModTime = t
-    
     # Display information
     res = mst.showTidesInfo(tidesDate)
     if res:
@@ -242,7 +240,6 @@ if __name__ == "__main__":
     mg.moduleDirPath = os.path.dirname(module_path(main))
 
     # Absolute pathname of data cache file
-    mg.localChartFile = os.path.join(mg.moduleDirPath, '%s' % (mg.LOCAL_TAB_FILE))
     mg.dataCachePath = os.path.join(mg.moduleDirPath, '%s' % (mg.DATA_CACHE_FILE))
     
     # Let's go

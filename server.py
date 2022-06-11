@@ -1,6 +1,5 @@
 import myGlobals as mg
 from common.utils import get_linenumber
-#from datetime import datetime
 import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Flask
@@ -42,7 +41,6 @@ def foreverLoop(loop_on, dataCachePath, debug, updateDelay):
         if level <= config.DEBUG:
             __builtin__.print('%s%s()%s:' % (color.BOLD, inspect.stack()[1][3], color.END), *args, **kwargs)
 
-    #myprint(1,'Started. Updating cache file every %d seconds (%s).' % (updateDelay, time.strftime('%H:%M:%S', time.gmtime(updateDelay))))
     myprint(1,'Started. Updating cache file every %d seconds (%s).' % (updateDelay, str(datetime.timedelta(seconds=updateDelay))))
     
     myprint(1,'Cache file: %s' % dataCachePath)
@@ -88,12 +86,12 @@ def apiServerMain():
             res = mst.getTidesInfoFromMetServiceServer()
             if res:
                 myprint(0, 'Failed to create local data cache. Aborting server')
-                return(res)
+                return res
     else:
         res = mst.getTidesInfoFromMetServiceServer()
         if res:
             myprint(0, 'Failed to create local data cache. Aborting server')
-            return(res)
+            return res
         
     recording_on = Value('b', True)
     p = Process(target=foreverLoop, args=(recording_on,
@@ -104,4 +102,4 @@ def apiServerMain():
     app.run(debug=True, use_reloader=False, port=5002) ##, host="0.0.0.0", port=6420)
     p.join()
 
-    return(0)
+    return 0
