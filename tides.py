@@ -313,6 +313,8 @@ def showTidesInfo(tidesDate):
         # build a list of tuples, each tuple containing: (time of tide, height of tide, label)
         l = list()
         for i in range(1, 9, 2):	# Skip over date field and height
+            if data[tidesDate][i] == '-':
+                continue		# remove phantom tide
             l.append((data[tidesDate][i], data[tidesDate][i+1], labels[i]))
             
         # Bubble sort the list by ascending time

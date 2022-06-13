@@ -49,7 +49,7 @@ def myprint(level, *args, **kwargs):
 # Sort criteria (1st field of each tuple) is a time representation in the form "%H:%M"
 def bubbleSort(elements):
     swapped = False
-    # Looping from size of array from last index[-1] to index [0]
+    # Looping from size of array from last index[-1] to index[0]
     for n in range(len(elements)-1, 0, -1):
         for i in range(n):
             if time.strptime(elements[i][0], "%H:%M") > time.strptime(elements[i+1][0], "%H:%M"):
