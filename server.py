@@ -17,7 +17,7 @@ import myMetServiceTides as mst
 
 from resources.tides import TidesAPI, TodayTidesAPI
 
-DATACACHE_AGING_IN_MINUTES = 60*24
+DATACACHE_AGING_IN_MINUTES = 24 * 60
 
 apiResources = {
     "tides" : [
@@ -41,13 +41,15 @@ def foreverLoop(loop_on, dataCachePath, debug, updateDelay):
         if level <= config.DEBUG:
             __builtin__.print('%s%s()%s:' % (color.BOLD, inspect.stack()[1][3], color.END), *args, **kwargs)
 
-    myprint(1,'Started. Updating cache file every %d seconds (%s).' % (updateDelay, str(datetime.timedelta(seconds=updateDelay))))
+    myprint(1,'Started. Updating cache file every %d minutes (%s).' % (updateDelay, str(datetime.timedelta(minutes=updateDelay))))
     
     myprint(1,'Cache file: %s' % dataCachePath)
+
+    updateDelayInSecs = updateDelay * 60
     
     while True:
         if loop_on.value == True:
-            time.sleep(updateDelay)
+            time.sleep(updateDelayInSecs)
             dt_now = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             myprint(0, 'Reloading cache file from server at %s...' % (dt_now))
             res = mst.getTidesInfoFromMetServiceServer()

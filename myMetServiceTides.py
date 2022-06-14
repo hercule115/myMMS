@@ -64,12 +64,12 @@ def parse_argv():
                         help="Use local cache if available (default=True)")
     parser.add_argument('-D', '--delay',
                         dest='updateDelay',
-                        default=86400,
+                        default=1440,
                         type=int,
                         action='store',
                         nargs='?',
                         metavar='DELAY',
-                        help="update interval in seconds (Server mode only)")
+                        help="update interval in minutes")
     parser.add_argument("-I", "--info",
                         action="store_true", dest="version", default=False,
                         help="print version and exit")
@@ -125,8 +125,8 @@ def main():
     config.DEBUG     = args.debug
     
     if config.DEBUG:
-        myprint(1, 'Running in DEBUG mode (level=%d)' % config.DEBUG)
         myprint(1,
+                'config.DEBUG =', config.DEBUG,
                 'config.SERVER =', config.SERVER,
                 'config.VERBOSE =', config.VERBOSE,
                 'config.USE_CACHE =', config.USE_CACHE)
@@ -147,18 +147,17 @@ def main():
         except:
             print('Cannot create log file')
 
-    if args.server:
-        if args.updateDelay:
-            config.UPDATEDELAY = args.updateDelay
-        else:
-            config.UPDATEDELAY = 86400 # seconds
+    if args.updateDelay:
+        config.UPDATEDELAY = args.updateDelay
+    else:
+        config.UPDATEDELAY = 1440 # minutes
 
     if config.SERVER:
         import server as msas
         if config.DEBUG:
             mg.logger.info('server imported (line #%d)' % get_linenumber())
 
-        myprint(0, 'Running in Server mode. Update interval: %d seconds (%s)' % (config.UPDATEDELAY, str(datetime.timedelta(seconds=config.UPDATEDELAY))))
+        myprint(0, 'Running in Server mode. Update interval: %d minutes (%s)' % (config.UPDATEDELAY, str(datetime.timedelta(minutes=config.UPDATEDELAY))))
         res = msas.apiServerMain()	# Never returns
         myprint(1, 'API Server exited with code %d' % res)
         sys.exit(res)
@@ -195,27 +194,21 @@ def main():
                 myprint(0, 'Failed to create/update local data cache')
                 sys.exit(res)
 
-        # Display information
-        res = mst.showTidesInfo(tidesDate)
+            if config.DEBUG:
+                t = os.path.getmtime(mg.dataCachePath)
+                dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
+                myprint(1, f'Cache file updated. Last modification time: {dt}')
+    else:
+        # Don't use cache. Read data from server
+        res = mst.getTidesInfoFromMetServiceServer()
         if res:
-            myprint(0, 'Unable to retrieve tides information')
-            sys.exit(1)
+            myprint(0, 'Failed to create/update local data cache')
+            sys.exit(res)
 
-        if args.logFile and args.logFile != '':
-            sys.stdout.close()
-            sys.stderr.close()
-
-        sys.exit(0)
-
-    # Read data from server
-    res = mst.getTidesInfoFromMetServiceServer()    
-    if res:
-        myprint(0, 'Failed to retrieve tides information from server')
-        sys.exit(res)
-
-    t = os.path.getmtime(mg.dataCachePath)
-    dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
-    myprint(1, 'Cache file updated. Last modification time: %s (%d)' % (dt,t))
+        if config.DEBUG:
+            t = os.path.getmtime(mg.dataCachePath)
+            dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
+            myprint(1, f'Cache file updated. Last modification time: {dt}')
 
     # Display information
     res = mst.showTidesInfo(tidesDate)
@@ -226,7 +219,9 @@ def main():
     if args.logFile and args.logFile != '':
         sys.stdout.close()
         sys.stderr.close()
-        
+
+    sys.exit(0)
+
 # Entry point    
 if __name__ == "__main__":
 

@@ -12,7 +12,7 @@ import myGlobals as mg
 import httpHeaders as hh
 import config
 
-from common.utils import myprint, color, dumpToFile, dumpJsonToFile, dumpListToFile, dumpListOfListToFile, bubbleSort
+from common.utils import myprint, color, dumpToFile, dumpJsonToFile, dumpListToFile, dumpListOfListToFile, bubbleSort, isFileOlderThanXMinutes
 
 class color:
     PURPLE    = '\033[95m'
@@ -241,7 +241,17 @@ class MetServiceTides:
 
 
 ####
+# Load data from local cache. If cache is older than delay, return None to force a reload
 def loadDataFromCacheFile():
+
+    if isFileOlderThanXMinutes(mg.dataCachePath, minutes=config.UPDATEDELAY / 60):
+        if config.DEBUG:
+            t = os.path.getmtime(mg.dataCachePath)
+            dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
+            myprint(1, f'Cache file outdated {dt}. Deleting and reloading from MetService server')
+        # Remove data cache file and reload from server
+        os.remove(mg.dataCachePath)
+        return None # Force a reload
 
     try:
         with open(mg.dataCachePath, 'r') as infile:
