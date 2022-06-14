@@ -57,11 +57,11 @@ def parse_argv():
                         nargs='?',
                         metavar='LOGFILE',
                         help="write debug messages to FILE")
-    parser.add_argument("-C", "--cache",
+    parser.add_argument("-nc", "--nocache",
                         action="store_true",
-                        dest="useCache",
-                        default=True,
-                        help="Use local cache if available (default=True)")
+                        dest="noCache",
+                        default=False,
+                        help="Don't use local cache (default=False)")
     parser.add_argument('-D', '--delay',
                         dest='updateDelay',
                         default=1440,
@@ -119,17 +119,17 @@ def main():
         print('%s: version %s' % (sys.argv[0], mg.VERSION))
         sys.exit(0)
 
-    config.SERVER    = args.server
-    config.VERBOSE   = args.verbose
-    config.USE_CACHE = args.useCache
-    config.DEBUG     = args.debug
+    config.SERVER   = args.server
+    config.VERBOSE  = args.verbose
+    config.NO_CACHE = args.noCache
+    config.DEBUG    = args.debug
     
     if config.DEBUG:
         myprint(1,
                 'config.DEBUG =', config.DEBUG,
                 'config.SERVER =', config.SERVER,
                 'config.VERBOSE =', config.VERBOSE,
-                'config.USE_CACHE =', config.USE_CACHE)
+                'config.NO_CACHE =', config.NO_CACHE)
         
     if args.logFile == None:
         #print('Using stdout')
@@ -183,7 +183,7 @@ def main():
         else:
             tidesDate = dt.strftime('%d%m%y')
 
-    if config.USE_CACHE:
+    if not config.NO_CACHE:
         # Load data from local cache
         info = mst.loadDataFromCacheFile()
         if not info:
