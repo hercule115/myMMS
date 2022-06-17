@@ -69,7 +69,7 @@ def parse_argv():
                         action='store',
                         nargs='?',
                         metavar='DELAY',
-                        help="update interval in minutes")
+                        help="update interval in minutes (default=1440, e.g. 24H)")
     parser.add_argument("-I", "--info",
                         action="store_true", dest="version", default=False,
                         help="print version and exit")
