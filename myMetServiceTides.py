@@ -132,7 +132,7 @@ def main():
                 'config.SERVER =', config.SERVER,
                 'config.VERBOSE =', config.VERBOSE,
                 'config.NO_CACHE =', config.NO_CACHE)
-        
+
     if args.logFile == None:
         #print('Using stdout')
         pass
@@ -184,6 +184,9 @@ def main():
             sys.exit(1)
         else:
             tidesDate = dt.strftime('%d%m%y')
+
+    # Check if requested month date is not the current month
+    
 
     if not config.NO_CACHE:
         # Load data from local cache

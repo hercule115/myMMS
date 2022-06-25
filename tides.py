@@ -293,6 +293,17 @@ def getTidesInfo(tidesDate):
         return data[tidesDate]
 
     
+def mauritiusLocalTime():
+
+    import pytz
+
+    local_dt = datetime.now()	# Local datetime
+    
+    mauritius = pytz.timezone('Indian/Mauritius')
+    mauritius_dt = local_dt.astimezone(mauritius)
+    myprint(1, 'Mauritius Local Time:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
+    return mauritius_dt.time()
+
 def showTidesInfo(tidesDate):
 
     # Load data from local cache
@@ -334,13 +345,13 @@ def showTidesInfo(tidesDate):
         
         # If reqesting today's tides, highlight next tide time
         if datetime.strptime(tidesDate, '%d%m%y').date() == datetime.today().date():
-            timeNow = datetime.now().time()
-            myprint(1, 'Today is:', datetime.now())
+            timeNowInMauritius = mauritiusLocalTime()
+            myprint(1, "Today's date:", datetime.now(), "Mauritius local time", timeNowInMauritius)
 
             nextTideNotFound = True
             for ele in l:
                 t = datetime.strptime(ele[0], '%H:%M').time()
-                if t >= timeNow:
+                if t >= timeNowInMauritius:
                     if nextTideNotFound:
                         nextTideNotFound = False
                         s = "{L:<19}: {B}{T:6}{E}({H}) {B}*{E}".format(L=ele[2], T=ele[0], H=ele[1], B=color.BOLD, E=color.END)
