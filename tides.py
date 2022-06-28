@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 import os
+import pytz
 import requests
 import time
 import shutil
@@ -46,7 +47,8 @@ METSERVICE_HTTP_REQUESTS = {
     },
 }
 
-
+cacheUpdated = False
+            
 class MetServiceTides:
     def __init__(self, session):
         self._session  = session
@@ -60,7 +62,7 @@ class MetServiceTides:
             myprint(1, 'Error retrieving information from server')
             return -1
 
-        # Parse returned information
+        # Parse returned information. Create/Update local cache file
         info = self._parseTidesPage(respText)
         myprint(2, json.dumps(info, indent=4))
         return 0
@@ -244,6 +246,9 @@ class MetServiceTides:
 # Load data from local cache. If cache is older than delay, return None to force a reload
 def loadDataFromCacheFile():
 
+    if not os.path.isfile(mg.dataCachePath):	# Cache file does not exists
+        return None
+    
     if isFileOlderThanXMinutes(mg.dataCachePath, minutes=config.UPDATEDELAY):
         if config.DEBUG:
             t = os.path.getmtime(mg.dataCachePath)
@@ -266,12 +271,16 @@ def loadDataFromCacheFile():
 
 
 def getTidesInfoFromMetServiceServer():
-        
+    global cacheUpdated
+    
     with requests.session() as session:
         # Create connection with MetService server
         mst = MetServiceTides(session)
         # Get information from server
         res = mst.getTidesInformation()
+        if not res:
+            myprint(1, 'Cache file updated')
+            cacheUpdated = True
         return res
 
 
@@ -295,8 +304,6 @@ def getTidesInfo(tidesDate):
     
 def mauritiusLocalTime():
 
-    import pytz
-
     local_dt = datetime.now()	# Local datetime
     
     mauritius = pytz.timezone('Indian/Mauritius')
@@ -309,8 +316,20 @@ def showTidesInfo(tidesDate):
     # Load data from local cache
     data = loadDataFromCacheFile()
     if not data:
-        myprint(0, 'Unable to retrieve tides information from cache file')
-        return -1
+        myprint(1, 'Failed to load tides data from local cache file. Retrieving data from server')
+        # Read data from server
+        res = getTidesInfoFromMetServiceServer()
+        if res:
+            myprint(0, 'Failed to create/update local data cache')
+            return -1
+
+        data = loadDataFromCacheFile()
+        # Assuming no error
+        
+        if config.DEBUG:
+            t = os.path.getmtime(mg.dataCachePath)
+            dt = datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
+            myprint(1, f'Cache file updated. Last modification time: {dt}')
 
     labels = ['Date',
              '1st High Tide Time',
@@ -322,17 +341,24 @@ def showTidesInfo(tidesDate):
              '2nd Low Tide Time',
              '2nd Low Tide Height']
 
-    # example: ["5", " 03:17", " 54", " 18:03", " 49", " 10:02", " 26", " -", " -"]
+    # example: ["5", "03:17", "54", "18:03", "49", "10:02", "26", "-", "-"]
 
     try:
         day,firstHTT,firstHTH,secHTT,secHTH,firstLTT,firstLTH,secLTT,secLTH = data[tidesDate]
     except:
         myprint(0, f'Invalid input date: {tidesDate}')
+        myprint(1, 'data:', data[tidesDate])
         return -1
 
     if config.VERBOSE:
-        print(f'{color.BOLD}Tides for date: %s{color.END}' % datetime.strptime(tidesDate, '%d%m%y').strftime("%a %d %b, %Y"))
-
+        #print(f'{color.BOLD}Tides for date: %s{color.END}' % datetime.strptime(tidesDate, '%d%m%y').strftime("%a %d %b, %Y"))
+        s = "{B}Tides for date: {DATE}{E} {CA}".format(
+            B=color.BOLD,
+            E=color.END,
+            CA="(+)" if cacheUpdated else "",
+            DATE=datetime.strptime(tidesDate, '%d%m%y').strftime("%a %d %b, %Y"))
+        print(s)
+        
         # build a list of tuples, each tuple containing: (time of tide, height of tide, label)
         l = list()
         for i in range(1, 9, 2):	# Skip over date field and height

@@ -185,31 +185,29 @@ def main():
         else:
             tidesDate = dt.strftime('%d%m%y')
 
-    # Check if requested month date is not the current month
-    
+    # if not config.NO_CACHE:
+    #     # Load data from local cache
+    #     info = mst.loadDataFromCacheFile()
+    #     if not info:
+    #         myprint(1, 'Failed to load tides data from local cache file. Retrieving data from server')
+    #         # Read data from server
+    #         res = mst.getTidesInfoFromMetServiceServer()
+    #         if res:
+    #             myprint(0, 'Failed to create/update local data cache')
+    #             sys.exit(res)
 
-    if not config.NO_CACHE:
-        # Load data from local cache
-        info = mst.loadDataFromCacheFile()
-        if not info:
-            myprint(1, 'Failed to load tides data from local cache file. Retrieving data from server')
-            # Read data from server
-            res = mst.getTidesInfoFromMetServiceServer()
-            if res:
-                myprint(0, 'Failed to create/update local data cache')
-                sys.exit(res)
-
-            if config.DEBUG:
-                t = os.path.getmtime(mg.dataCachePath)
-                dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
-                myprint(1, f'Cache file updated. Last modification time: {dt}')
-    else:
-        # Don't use cache. Read data from server
+    #         if config.DEBUG:
+    #             t = os.path.getmtime(mg.dataCachePath)
+    #             dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
+    #             myprint(1, f'Cache file updated. Last modification time: {dt}')
+    # else:
+    if config.NO_CACHE:
+        # Don't use existing cache. Read data from server (update local cache)
         res = mst.getTidesInfoFromMetServiceServer()
         if res:
             myprint(0, 'Failed to create/update local data cache')
             sys.exit(res)
-
+        
         if config.DEBUG:
             t = os.path.getmtime(mg.dataCachePath)
             dt = datetime.datetime.fromtimestamp(t).strftime('%Y/%m/%d %H:%M:%S')
