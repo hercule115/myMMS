@@ -346,12 +346,10 @@ def showTidesInfo(tidesDate):
     try:
         day,firstHTT,firstHTH,secHTT,secHTH,firstLTT,firstLTH,secLTT,secLTH = data[tidesDate]
     except:
-        myprint(0, f'Invalid input date: {tidesDate}')
-        myprint(1, 'data:', data[tidesDate])
+        myprint(0, f'Invalid/Not found input date: {tidesDate}')
         return -1
 
     if config.VERBOSE:
-        #print(f'{color.BOLD}Tides for date: %s{color.END}' % datetime.strptime(tidesDate, '%d%m%y').strftime("%a %d %b, %Y"))
         s = "{B}Tides for date: {DATE}{E} {CA}".format(
             B=color.BOLD,
             E=color.END,
@@ -388,7 +386,8 @@ def showTidesInfo(tidesDate):
                 print(s)
         else:	# Tides request for another day
             for ele in l:
-                s = "{L:<19}: {B}{T:6}{E}({H})".format(L=ele[2], B=color.BOLD, T=ele[0], E=color.END,H=ele[1])
+                #s = "{L:<19}: {B}{T:6}{E}({H})".format(L=ele[2], B=color.BOLD, T=ele[0], E=color.END,H=ele[1])
+                s = "{L:<19}: {T:6}({H})".format(L=ele[2], T=ele[0], H=ele[1])
                 print(s)
     else:
         print(data[tidesDate])
