@@ -24,7 +24,10 @@ class color:
     YELLOW    = '\033[93m'
     RED       = '\033[91m'
     BOLD      = '\033[1m'
+    GREYED    = '\033[2m'
+    ITALIC    = '\033[3m'
     UNDERLINE = '\033[4m'
+    STRIKETHRu = '\033[9m'
     END       = '\033[0m'
 
 
@@ -311,6 +314,15 @@ def mauritiusLocalTime():
     myprint(1, 'Mauritius Local Time:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
     return mauritius_dt.time()
 
+def mauritiusLocalDate():
+
+    local_dt = datetime.now()	# Local datetime
+    
+    mauritius = pytz.timezone('Indian/Mauritius')
+    mauritius_dt = local_dt.astimezone(mauritius)
+    myprint(1, 'Mauritius Local Time:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
+    return mauritius_dt.date()
+
 def showTidesInfo(tidesDate):
 
     # Load data from local cache
@@ -367,10 +379,11 @@ def showTidesInfo(tidesDate):
         # Bubble sort the list by ascending time
         bubbleSort(l)
         
-        # If reqesting today's tides, highlight next tide time
-        if datetime.strptime(tidesDate, '%d%m%y').date() == datetime.today().date():
+        # If reqesting today's tides (using Mauritius time), highlight next tide time
+        #if datetime.strptime(tidesDate, '%d%m%y').date() == datetime.today().date():
+        if datetime.strptime(tidesDate, '%d%m%y').date() == mauritiusLocalDate():
             timeNowInMauritius = mauritiusLocalTime()
-            myprint(1, "Today's date:", datetime.now(), "Mauritius local time", timeNowInMauritius)
+            myprint(1, "Today's local date:", datetime.now(), "Mauritius local time", timeNowInMauritius)
 
             nextTideNotFound = True
             for ele in l:
@@ -382,13 +395,18 @@ def showTidesInfo(tidesDate):
                     else:
                         s = "{L:<19}: {T:6}({H})".format(L=ele[2], T=ele[0], H=ele[1], B=color.BOLD, E=color.END)
                 else:
-                    s = "{L:<19}: {T:6}({H})".format(L=ele[2], T=ele[0], H=ele[1])
+                    #s = "{L:<19}: {T:6}({H})".format(L=ele[2], T=ele[0], H=ele[1])
+                    s = "{I}{L:<19}: {T:6}({H}){E}".format(I=color.ITALIC, E=color.END, L=ele[2], T=ele[0], H=ele[1])
                 print(s)
-        else:	# Tides request for another day
+        elif datetime.strptime(tidesDate, '%d%m%y').date() > mauritiusLocalDate():
+            # Tides request for a day in the future
             for ele in l:
-                #s = "{L:<19}: {B}{T:6}{E}({H})".format(L=ele[2], B=color.BOLD, T=ele[0], E=color.END,H=ele[1])
                 s = "{L:<19}: {T:6}({H})".format(L=ele[2], T=ele[0], H=ele[1])
                 print(s)
-    else:
+        else:	# Tides request for a past day
+            for ele in l:
+                s = "{G}{L:<19}: {T:6}({H}){E}".format(G=color.GREYED, E=color.END, L=ele[2], T=ele[0], H=ele[1])
+                print(s)
+    else:	# Short output
         print(data[tidesDate])
     return 0
