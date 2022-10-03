@@ -43,7 +43,7 @@ METSERVICE_HTTP_REQUESTS = {
         },
         "resp" : {
             "code" : 200,
-            #"dumpResponse" : 'metservice.intnet.mu.html',
+            "dumpResponse" : 'metservice.intnet.mu.html',
             "updateCookies" : False,                
         },
         "returnText" : True,
@@ -224,15 +224,24 @@ class MetServiceTides:
 
         myprint(1, monthYear, mmyy)
 
+        currMonthYear = mauritiusLocalMonthYear()         # current monthName and Year
+        myprint(1, 'Current Month Year', currMonthYear)
+        
         oneDayDict = dict()
         oneMonthDict = dict()
         
         # Parse first month (current month) only
         for oneDayList in data:
-            # If item is empty, it means the end of month
-            if len(oneDayList) == 0:	
+
+            if len(oneDayList) == 1 and oneDayList[0] != currMonthYear:
                 myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
                 break
+
+            # If item is empty, it means the end of month
+            # myprint(2,len(oneDayList),oneDayList)
+            # if len(oneDayList) == 0:	
+            #     myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
+            #     break
 
             if oneDayList[0].isnumeric():	# skip header lines
                 oneDayDict.clear()
@@ -314,13 +323,23 @@ def mauritiusLocalTime():
     myprint(1, 'Mauritius Local Time:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
     return mauritius_dt.time()
 
+def mauritiusLocalMonthYear():
+
+    local_dt = datetime.now()	# Local datetime
+    
+    mauritius = pytz.timezone('Indian/Mauritius')
+    mauritius_dt = local_dt.astimezone(mauritius)
+    my = mauritius_dt.strftime('%B %Y')
+    myprint(1, 'Mauritius Local Month Year:', my)
+    return my
+
 def mauritiusLocalDate():
 
     local_dt = datetime.now()	# Local datetime
     
     mauritius = pytz.timezone('Indian/Mauritius')
     mauritius_dt = local_dt.astimezone(mauritius)
-    myprint(1, 'Mauritius Local Time:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
+    myprint(1, 'Mauritius Local Date:', mauritius_dt.strftime('%d/%m/%Y %H:%M:%S %Z%z'))
     return mauritius_dt.date()
 
 def showTidesInfo(tidesDate):
