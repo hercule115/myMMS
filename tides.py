@@ -237,12 +237,6 @@ class MetServiceTides:
                 myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
                 break
 
-            # If item is empty, it means the end of month
-            # myprint(2,len(oneDayList),oneDayList)
-            # if len(oneDayList) == 0:	
-            #     myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
-            #     break
-
             if oneDayList[0].isnumeric():	# skip header lines
                 oneDayDict.clear()
                 k = format(int(oneDayList[0]), '02d') + mmyy  # date (ddmmyy) as key

@@ -176,6 +176,12 @@ def main():
             sys.exit(0)
 
         tidesDate = args.tidesDate
+        
+        if tidesDate == 'tomorrow':
+            dt = datetime.datetime.now() + datetime.timedelta(days=1)
+            tidesDate = dt.strftime('%d%m%y')
+            print(dt_now,dt,tidesDate)
+
         # Check for a valid date
         try:
             dt = datetime.datetime.strptime(tidesDate, '%d%m%y')
