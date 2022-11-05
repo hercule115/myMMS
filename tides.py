@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, date
 import json
 import os
 import pytz
@@ -219,13 +219,21 @@ class MetServiceTides:
             data.append([ele for ele in cols if ele]) # Get rid of empty values
 
         # Get month name from first element of the first list
-        monthYear = data[0][0].replace("'", "")
-        mmyy = datetime.strptime(monthYear, '%B %Y').strftime('%m%y')
+        myprint(1,data[0][0])
+        
+        monthName = data[0][0].replace("'", "").split()[0]
+        myprint(1, monthName)
+        
+        year = date.today().year
 
+        monthYear = '%s %s' % (monthName, year)
+        mmyy = datetime.strptime(monthYear, '%B %Y').strftime('%m%y')
         myprint(1, monthYear, mmyy)
 
-        currMonthYear = mauritiusLocalMonthYear()         # current monthName and Year
-        myprint(1, 'Current Month Year', currMonthYear)
+        #currMonthYear = mauritiusLocalMonthYear()         # current monthName and Year
+        #myprint(1, 'Current Month Year', currMonthYear)
+        currMonth = mauritiusLocalMonth()         # current monthName
+        myprint(1, 'Current Month', currMonth)
         
         oneDayDict = dict()
         oneMonthDict = dict()
@@ -233,7 +241,10 @@ class MetServiceTides:
         # Parse first month (current month) only
         for oneDayList in data:
 
-            if len(oneDayList) == 1 and oneDayList[0] != currMonthYear:
+            myprint(2, oneDayList, len(oneDayList))
+            
+            #if len(oneDayList) == 1 and oneDayList[0] != currMonthYear:
+            if not oneDayList or len(oneDayList) == 1 and oneDayList[0] != currMonth:
                 myprint(1, 'End of month %s: %d entries in dict' % (monthYear,len(oneMonthDict)))
                 break
 
@@ -326,6 +337,16 @@ def mauritiusLocalMonthYear():
     my = mauritius_dt.strftime('%B %Y')
     myprint(1, 'Mauritius Local Month Year:', my)
     return my
+
+def mauritiusLocalMonth():
+
+    local_dt = datetime.now()	# Local datetime
+    
+    mauritius = pytz.timezone('Indian/Mauritius')
+    mauritius_dt = local_dt.astimezone(mauritius)
+    m = mauritius_dt.strftime('%B')
+    myprint(1, 'Mauritius Local Month:', m)
+    return m
 
 def mauritiusLocalDate():
 

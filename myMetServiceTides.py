@@ -180,7 +180,6 @@ def main():
         if tidesDate == 'tomorrow':
             dt = datetime.datetime.now() + datetime.timedelta(days=1)
             tidesDate = dt.strftime('%d%m%y')
-            print(dt_now,dt,tidesDate)
 
         # Check for a valid date
         try:
